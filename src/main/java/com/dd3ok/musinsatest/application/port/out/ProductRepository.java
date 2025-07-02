@@ -1,6 +1,6 @@
 package com.dd3ok.musinsatest.application.port.out;
 
-import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
+import com.dd3ok.musinsatest.application.port.in.dto.BrandCategoryPriceDto;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
 
@@ -11,11 +11,10 @@ public interface ProductRepository {
     // API 1
     List<Product> findLowestPriceProductsGroupByCategory();
     // API 2
-    List<BrandTotalPriceDto> findBrandWithLowestTotalPrice();
+    List<BrandCategoryPriceDto> findLowestPriceByCategoryInBrand();
     // API 3
     List<Product> findLowestPriceProductsByCategory(Category category);
     List<Product> findHighestPriceProductsByCategory(Category category);
-    List<Product> findAllByBrandId(Long brandId);
 
     // API 4
     boolean existsByBrandId(Long brandId);

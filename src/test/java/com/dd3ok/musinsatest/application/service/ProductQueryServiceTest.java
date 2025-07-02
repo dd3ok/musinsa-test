@@ -1,8 +1,8 @@
 package com.dd3ok.musinsatest.application.service;
 
+import com.dd3ok.musinsatest.application.port.in.dto.BrandCategoryPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandLowestPriceSetResult;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandPriceDto;
-import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryLowestPriceProductDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceRangeResult;
 import com.dd3ok.musinsatest.application.port.in.dto.LowestPriceProductsResult;
@@ -75,20 +75,27 @@ class ProductQueryServiceTest {
     @DisplayName("단일 브랜드 최저가 세트 조회 시, 여러 브랜드가 최저가일 경우 ID가 가장 빠른 브랜드 리턴")
     void 단일브랜드_최저가_세트_조회_성공() {
         // given
-        var winnerCandidate = new BrandTotalPriceDto(4L, new BigDecimal("36100"));
-        var tieCandidate = new BrandTotalPriceDto(5L, new BigDecimal("36100"));
-        var otherCandidate = new BrandTotalPriceDto(1L, new BigDecimal("40000"));
-        List<BrandTotalPriceDto> mockCandidates = List.of(winnerCandidate, tieCandidate, otherCandidate);
-        given(productRepository.findBrandWithLowestTotalPrice()).willReturn(mockCandidates);
+        List<BrandCategoryPriceDto> mockLowestPrices = List.of(
+                // A 브랜드 total 40000
+                new BrandCategoryPriceDto(1L, Category.TOP, new BigDecimal("15000")),
+                new BrandCategoryPriceDto(1L, Category.OUTER, new BigDecimal("25000")),
+                // D 브랜드 total 36100 최저가
+                new BrandCategoryPriceDto(4L, Category.TOP, new BigDecimal("10100")),
+                new BrandCategoryPriceDto(4L, Category.OUTER, new BigDecimal("5100")),
+                new BrandCategoryPriceDto(4L, Category.PANTS, new BigDecimal("5500")),
+                new BrandCategoryPriceDto(4L, Category.BAG, new BigDecimal("15400")),
+                // E 브랜드 total 36100 동일 최저가
+                new BrandCategoryPriceDto(5L, Category.TOP, new BigDecimal("10000")),
+                new BrandCategoryPriceDto(5L, Category.OUTER, new BigDecimal("6000")),
+                new BrandCategoryPriceDto(5L, Category.PANTS, new BigDecimal("5100")),
+                new BrandCategoryPriceDto(5L, Category.BAG, new BigDecimal("15000"))
+        );
+
+        // 2. 새로운 Repository 메서드를 given으로 설정
+        given(productRepository.findLowestPriceByCategoryInBrand()).willReturn(mockLowestPrices);
 
         Brand winnerBrand = Brand.from(4L, "D");
         given(brandRepository.findById(4L)).willReturn(Optional.of(winnerBrand));
-
-        List<Product> winnerProducts = List.of(
-                Product.from(25L, new Price(new BigDecimal("10100")), Category.TOP, winnerBrand),
-                Product.from(26L, new Price(new BigDecimal("5100")), Category.OUTER, winnerBrand)
-        );
-        given(productRepository.findAllByBrandId(4L)).willReturn(winnerProducts);
 
         // when
         BrandLowestPriceSetResult result = productQueryService.getLowestPriceProductsBrandSet();
@@ -96,7 +103,9 @@ class ProductQueryServiceTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.brandName()).isEqualTo("D");
+        // D 브랜드의 총액(10100 + 5100 + 5500 + 15400)을 검증
         assertThat(result.totalPrice()).isEqualByComparingTo("36100");
+        assertThat(result.products()).hasSize(4);
     }
 
 

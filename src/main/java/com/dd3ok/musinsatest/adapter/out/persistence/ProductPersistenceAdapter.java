@@ -5,7 +5,7 @@ import com.dd3ok.musinsatest.adapter.out.persistence.entity.ProductEntity;
 import com.dd3ok.musinsatest.adapter.out.persistence.mapper.ProductMapper;
 import com.dd3ok.musinsatest.adapter.out.persistence.repository.BrandJpaRepository;
 import com.dd3ok.musinsatest.adapter.out.persistence.repository.ProductJpaRepository;
-import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
+import com.dd3ok.musinsatest.application.port.in.dto.BrandCategoryPriceDto;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
 import com.dd3ok.musinsatest.common.exception.BaseException;
 import com.dd3ok.musinsatest.common.exception.ErrorCode;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,8 +32,8 @@ public class ProductPersistenceAdapter implements ProductRepository {
     }
 
     @Override
-    public List<BrandTotalPriceDto> findBrandWithLowestTotalPrice() {
-        return productJpaRepository.findBrandWithLowestTotalPrice();
+    public List<BrandCategoryPriceDto> findLowestPriceByCategoryInBrand() {
+        return productJpaRepository.findLowestPriceByCategoryInBrand();
     }
 
     @Override
@@ -49,13 +48,6 @@ public class ProductPersistenceAdapter implements ProductRepository {
         return productJpaRepository.findHighestPriceProductsByCategory(category).stream()
                 .map(productMapper::toDomain)
                 .toList();
-    }
-
-    @Override
-    public List<Product> findAllByBrandId(Long brandId) {
-        return productJpaRepository.findAllByBrandId(brandId).stream()
-                .map(productMapper::toDomain)
-                .collect(Collectors.toList());
     }
 
     @Override

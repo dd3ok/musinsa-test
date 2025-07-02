@@ -3,26 +3,25 @@ package com.dd3ok.musinsatest.application.service;
 import com.dd3ok.musinsatest.application.port.in.BrandLowestPriceSetUseCase;
 import com.dd3ok.musinsatest.application.port.in.CategoryLowHighPriceUseCase;
 import com.dd3ok.musinsatest.application.port.in.LowestPriceProductsUseCase;
+import com.dd3ok.musinsatest.application.port.in.dto.BrandCategoryPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandLowestPriceSetResult;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandPriceDto;
-import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryLowestPriceProductDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceRangeResult;
 import com.dd3ok.musinsatest.application.port.in.dto.LowestPriceProductsResult;
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import com.dd3ok.musinsatest.domain.brand.Brand;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
-import com.dd3ok.musinsatest.common.exception.BaseException;
-import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,29 +69,40 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
     @Override
     public BrandLowestPriceSetResult getLowestPriceProductsBrandSet() {
         // 1. 브랜드별 최저가 조회
-        List<BrandTotalPriceDto> candidates = productRepository.findBrandWithLowestTotalPrice();
+        List<BrandCategoryPriceDto> lowestPrices = productRepository.findLowestPriceByCategoryInBrand();
 
-        // 2. 최저가 브랜드가 여럿일 경우 빠른 브랜드 선택
-        BigDecimal lowestPrice = candidates.getFirst().totalPrice();
-        BrandTotalPriceDto winner = candidates.stream()
-                .filter(c -> c.totalPrice().compareTo(lowestPrice) == 0)
-                .min(Comparator.comparing(BrandTotalPriceDto::brandId))
+        // 2. 가져온 최저가 목록을 브랜드별로 그룹화하고, 각 브랜드의 최저가 총합을 계산합니다.
+        Map<Long, BigDecimal> brandTotalPriceMap = lowestPrices.stream()
+                .collect(Collectors.groupingBy(
+                        BrandCategoryPriceDto::brandId,
+                        Collectors.mapping(
+                                BrandCategoryPriceDto::price,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+                        )
+                ));
+
+        // 3. 총합이 가장 낮은 브랜드를 찾습니다. (가격이 같으면 브랜드 ID가 낮은 순)
+        Long winnerBrandId = brandTotalPriceMap.entrySet().stream()
+                .min(Map.Entry.<Long, BigDecimal>comparingByValue()
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .map(Map.Entry::getKey)
                 .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
 
-        Brand brand = brandRepository.findById(winner.brandId())
+        // 4. 최종 결과를 구성합니다.
+        Brand winnerBrand = brandRepository.findById(winnerBrandId)
                 .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
 
-        // 3. 최저가 브랜드 상품 조회
-        List<Product> products = productRepository.findAllByBrandId(winner.brandId());
-
-        List<CategoryPriceDto> categoryPriceDtos = products.stream()
-                .map(p -> new CategoryPriceDto(p.getCategory(), p.getPrice().value()))
+        List<CategoryPriceDto> categoryPriceDtos = lowestPrices.stream()
+                .filter(dto -> dto.brandId().equals(winnerBrandId))
+                .map(dto -> new CategoryPriceDto(dto.category(), dto.price()))
                 .toList();
 
+        BigDecimal totalPrice = brandTotalPriceMap.get(winnerBrandId);
+
         return new BrandLowestPriceSetResult(
-                brand.getName(),
+                winnerBrand.getName(),
                 categoryPriceDtos,
-                winner.totalPrice()
+                totalPrice
         );
     }
 
