@@ -33,9 +33,9 @@ class ProductTest {
 
         // then
         assertThat(product).isNotNull();
-        assertThat(product.getPrice()).isEqualTo(validPrice);
-        assertThat(product.getCategory()).isEqualTo(validCategory);
-        assertThat(product.getBrand()).isEqualTo(validBrand);
+        assertThat(product.price()).isEqualTo(validPrice);
+        assertThat(product.category()).isEqualTo(validCategory);
+        assertThat(product.brand()).isEqualTo(validBrand);
     }
 
     @Test

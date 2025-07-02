@@ -20,7 +20,7 @@ class BrandTest {
 
         // then
         assertThat(brand).isNotNull();
-        assertThat(brand.getName()).isEqualTo(validName);
+        assertThat(brand.name()).isEqualTo(validName);
     }
 
     @Test
@@ -50,7 +50,7 @@ class BrandTest {
         brand.updateName(newName);
 
         // then
-        assertThat(brand.getName()).isEqualTo(newName);
+        assertThat(brand.name()).isEqualTo(newName);
     }
 
     @Test

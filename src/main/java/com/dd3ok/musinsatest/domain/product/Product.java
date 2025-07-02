@@ -3,57 +3,47 @@ package com.dd3ok.musinsatest.domain.product;
 import com.dd3ok.musinsatest.domain.brand.Brand;
 import com.dd3ok.musinsatest.global.exception.BaseException;
 import com.dd3ok.musinsatest.global.exception.ErrorCode;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.util.Objects;
+public record Product(Long id, Price price, Category category, Brand brand) {
 
-
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
-    private Long id;
-    private Price price;
-    private Category category;
-    private Brand brand;
-
-    private Product(Price price, Category category, Brand brand) {
+    public Product {
         if (price == null) {
             throw new BaseException(ErrorCode.INVALID_PRICE_NULL);
-        } else if (category == null) {
+        }
+        if (category == null) {
             throw new BaseException(ErrorCode.INVALID_CATEGORY_NULL);
-        } else if (brand == null) {
+        }
+        if (brand == null) {
             throw new BaseException(ErrorCode.INVALID_BRAND_NULL);
         }
-
-        this.price = price;
-        this.category = category;
-        this.brand = brand;
     }
 
     public static Product create(Price price, Category category, Brand brand) {
-        return new Product(price, category, brand);
+        return new Product(null, price, category, brand);
     }
 
-    public void update(Price newPrice, Category newCategory, Brand newBrand) {
-        // 수정 로직을 한 곳에서 관리
-        if (newPrice != null) {
-            this.price = newPrice;
-        }
-        if (newCategory != null) {
-            this.category = newCategory;
-        }
-        if (newBrand != null) {
-            this.brand = newBrand;
-        }
+    public static Product from(Long id, Price price, Category category, Brand brand) {
+        return new Product(id, price, category, brand);
     }
 
-    // Mapper나 테스트를 위한 생성자
-    public Product(Long id, Price price, Category category, Brand brand) {
-        this.id = id;
-        this.price = price;
-        this.category = category;
-        this.brand = brand;
+    public Product updatePrice(Price newPrice) {
+        return new Product(this.id, newPrice, this.category, this.brand);
+    }
+
+    public Product updateCategory(Category newCategory) {
+        return new Product(this.id, this.price, newCategory, this.brand);
+    }
+
+    public Product updateBrand(Brand newBrand) {
+        return new Product(this.id, this.price, this.category, newBrand);
+    }
+
+    public Product update(Price newPrice, Category newCategory, Brand newBrand) {
+        return new Product(
+                this.id,
+                newPrice != null ? newPrice : this.price,
+                newCategory != null ? newCategory : this.category,
+                newBrand != null ? newBrand : this.brand
+        );
     }
 }
