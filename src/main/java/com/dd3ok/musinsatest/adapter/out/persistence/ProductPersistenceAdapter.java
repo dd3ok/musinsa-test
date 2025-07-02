@@ -1,21 +1,28 @@
 package com.dd3ok.musinsatest.adapter.out.persistence;
 
+import com.dd3ok.musinsatest.adapter.out.persistence.entity.BrandEntity;
+import com.dd3ok.musinsatest.adapter.out.persistence.entity.ProductEntity;
 import com.dd3ok.musinsatest.adapter.out.persistence.mapper.ProductMapper;
+import com.dd3ok.musinsatest.adapter.out.persistence.repository.BrandJpaRepository;
 import com.dd3ok.musinsatest.adapter.out.persistence.repository.ProductJpaRepository;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
+import com.dd3ok.musinsatest.global.exception.BaseException;
+import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 public class ProductPersistenceAdapter implements ProductRepository {
     private final ProductJpaRepository productJpaRepository;
+    private final BrandJpaRepository brandJpaRepository;
     private final ProductMapper productMapper;
 
     @Override
@@ -49,5 +56,46 @@ public class ProductPersistenceAdapter implements ProductRepository {
         return productJpaRepository.findAllByBrandId(brandId).stream()
                 .map(productMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Product> findById(Long id) {
+        return productJpaRepository.findById(id).map(productMapper::toDomain);
+    }
+
+    @Override
+    public Product save(Product product) {
+        ProductEntity productEntity = convertToEntity(product);
+        ProductEntity savedEntity = productJpaRepository.save(productEntity);
+        return productMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public void delete(Product product) {
+        productJpaRepository.deleteById(product.id());
+    }
+
+    private ProductEntity convertToEntity(Product product) {
+        BrandEntity brandEntity = brandJpaRepository.findById(product.brand().id())
+                .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
+
+        if (product.id() == null) {
+            return ProductEntity.from(product, brandEntity);
+        } else {
+            ProductEntity entity = productJpaRepository.findById(product.id())
+                    .orElseThrow(() -> new BaseException(ErrorCode.PRODUCT_NOT_FOUND));
+            entity.update(product.price().value(), product.category(), brandEntity);
+            return entity;
+        }
+    }
+
+    @Override
+    public boolean existsByBrandId(Long brandId) {
+        return productJpaRepository.existsByBrandId(brandId);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productJpaRepository.findAll().stream().map(productMapper::toDomain).toList();
     }
 }

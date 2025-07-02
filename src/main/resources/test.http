@@ -24,3 +24,83 @@ Accept: application/json
 ###
 GET {{host}}/products/categories/OUTERS/low-high-price
 Accept: application/json
+
+
+
+###
+# API4 "ZZZ" 새브랜드 등록
+POST {{host}}/brands
+Content-Type: application/json
+
+{
+  "name": "ZZZ"
+}
+
+###
+# 생성한 브랜드 확인
+GET {{host}}/brands
+
+
+###
+# 브랜드 이름 변경
+PUT {{host}}/brands/10
+Content-Type: application/json
+
+{
+  "name": "AAA"
+}
+
+###
+# 수정된 브랜드 확인
+GET {{host}}/brands
+
+###
+# 브랜드 삭제 - 상품있는 삭제 실패
+DELETE {{host}}/brands/9
+
+###
+# 브랜드 삭제 - 미존재 브랜드 삭제 o
+DELETE {{host}}/brands/10
+
+###
+# 브랜드 삭제 확인
+GET {{host}}/brands
+
+
+###
+# 상품id 9, "I" 브랜드에 상품 추가
+POST {{host}}/products
+Content-Type: application/json
+
+{
+  "brandId": 9,
+  "category": "SOCKS",
+  "price": 3500
+}
+
+###
+# 상품 생성 확인
+GET {{host}}/products
+
+
+###
+# 상품 변경
+PUT {{host}}/products/73
+Content-Type: application/json
+
+{
+  "price": 12500
+}
+
+###
+# 상품 수정 확인
+GET {{host}}/products
+
+
+###
+# 상품 삭제
+DELETE {{host}}/products/73
+
+###
+# 상품 삭제 확인
+GET {{host}}/products

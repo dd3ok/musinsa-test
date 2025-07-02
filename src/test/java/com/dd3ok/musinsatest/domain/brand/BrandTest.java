@@ -47,10 +47,10 @@ class BrandTest {
         String newName = "UpdatedName";
 
         // when
-        brand.updateName(newName);
+        Brand updatedBrand = brand.updateName(newName);
 
         // then
-        assertThat(brand.name()).isEqualTo(newName);
+        assertThat(updatedBrand.name()).isEqualTo(newName);
     }
 
     @Test

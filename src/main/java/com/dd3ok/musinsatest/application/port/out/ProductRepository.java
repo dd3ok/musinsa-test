@@ -5,6 +5,7 @@ import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository {
     // API 1
@@ -14,6 +15,13 @@ public interface ProductRepository {
     // API 3
     List<Product> findLowestPriceProductsByCategory(Category category);
     List<Product> findHighestPriceProductsByCategory(Category category);
-
     List<Product> findAllByBrandId(Long brandId);
+
+    // API 4
+    boolean existsByBrandId(Long brandId);
+    Product save(Product product);
+    void delete(Product product);
+    Optional<Product> findById(Long id);
+
+    List<Product> findAll();
 }

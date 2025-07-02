@@ -51,7 +51,6 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
                         (p1, p2) -> p1.brand().name().compareTo(p2.brand().name()) < 0 ? p1 : p2
                 ));
 
-        // 3. dto 매핑
         List<CategoryLowestPriceProductDto> productDtos = lowestPriceProductMap.values().stream()
                 .map(product -> new CategoryLowestPriceProductDto(
                         product.category(),
@@ -60,7 +59,7 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
                 ))
                 .toList();
 
-        // 4. 총액 계산
+        // 3. 총액 계산
         BigDecimal totalPrice = productDtos.stream()
                 .map(CategoryLowestPriceProductDto::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
