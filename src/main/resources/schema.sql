@@ -21,4 +21,3 @@ ALTER TABLE product ADD CONSTRAINT FK_PRODUCT_ON_BRAND FOREIGN KEY (brand_id) RE
 
 CREATE INDEX idx_product_category ON product (category);
 CREATE INDEX idx_product_brand_id ON product (brand_id);
-CREATE INDEX idx_product_category_price ON product (category, price);

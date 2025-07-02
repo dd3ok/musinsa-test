@@ -6,3 +6,10 @@
 # GET /products/lowest-price/by-category
 GET {{host}}/products/lowest-price/group-category
 Accept: application/json
+
+
+###
+# API 2: 최저가 브랜드 상품 조회
+# GET /brands/lowest-price/brand-set
+GET {{host}}/products/lowest-price/brand-set
+Accept: application/json
