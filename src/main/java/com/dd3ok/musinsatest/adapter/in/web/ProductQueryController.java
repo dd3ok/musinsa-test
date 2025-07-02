@@ -25,6 +25,7 @@ public class ProductQueryController {
     private final BrandLowestPriceSetUseCase brandLowestPriceSetUseCase;
     private final CategoryLowHighPriceUseCase categoryLowHighPriceUseCase;
 
+    // COMMENT: 집계의 경우 별도의 테이블이나 캐싱을 활용하고 싶었으나 요구사항 범위 밖으로 보여 적용하진 않았습니다.
     // API 1번 카테고리별 최저가 조회
     @GetMapping("/lowest-price/group-category")
     public ResponseEntity<CategoryLowestPriceResponse> getLowestPriceProductsByCategory() {

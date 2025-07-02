@@ -38,16 +38,16 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
 
     @Override
     public LowestPriceProductsResult getLowestPriceProductsByCategory() {
-        // 1. 최저가 조회
+        // 1. 카테고리별 최저가 상품 리스트 조회
         List<Product> products = productRepository.findLowestPriceProductsGroupByCategory();
 
-        // COMMENT: 같은 가격일 경우 브랜드 이름이 빠른순 선택 했습니다.
+        // COMMENT: 같은 가격일 경우 브랜드 id가 빠른순 선택 했습니다.
         // 2. 카테고리별로 하나의 상품만 선택
         Map<Category, Product> lowestPriceProductMap = products.stream()
                 .collect(Collectors.toMap(
                         Product::getCategory,
                         p -> p,
-                        (p1, p2) -> p1.getBrand().getName().compareTo(p2.getBrand().getName()) < 0 ? p1 : p2
+                        (p1, p2) -> p1.getBrand().getId().compareTo(p2.getBrand().getId()) < 0 ? p1 : p2
                 ));
 
         List<CategoryLowestPriceProductDto> productDtos = lowestPriceProductMap.values().stream()
