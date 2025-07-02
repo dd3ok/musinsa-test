@@ -3,13 +3,24 @@
 
 ###
 # API 1: 카테고리별 최저가 상품
-# GET /products/lowest-price/by-category
 GET {{host}}/products/lowest-price/group-category
 Accept: application/json
 
 
 ###
 # API 2: 최저가 브랜드 상품 조회
-# GET /brands/lowest-price/brand-set
 GET {{host}}/products/lowest-price/brand-set
+Accept: application/json
+
+###
+# API 3: 특정 카테고리에서 최저가, 최고가 브랜드와 상품 가격 조회
+GET {{host}}/products/categories/TOP/low-high-price
+Accept: application/json
+
+###
+GET {{host}}/products/categories/PANTS/low-high-price
+Accept: application/json
+
+###
+GET {{host}}/products/categories/OUTERS/low-high-price
 Accept: application/json

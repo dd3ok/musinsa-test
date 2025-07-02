@@ -31,8 +31,17 @@ public class ProductPersistenceAdapter implements ProductRepository {
     }
 
     @Override
-    public List<Product> findLowestAndHighestProductsByCategory(Category category) {
-        return List.of();
+    public List<Product> findLowestPriceProductsByCategory(Category category) {
+        return productJpaRepository.findLowestPriceProductsByCategory(category).stream()
+                .map(productMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Product> findHighestPriceProductsByCategory(Category category) {
+        return productJpaRepository.findHighestPriceProductsByCategory(category).stream()
+                .map(productMapper::toDomain)
+                .toList();
     }
 
     @Override

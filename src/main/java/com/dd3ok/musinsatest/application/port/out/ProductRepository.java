@@ -12,7 +12,8 @@ public interface ProductRepository {
     // API 2
     List<BrandTotalPriceDto> findBrandWithLowestTotalPrice();
     // API 3
-    List<Product> findLowestAndHighestProductsByCategory(Category category);
+    List<Product> findLowestPriceProductsByCategory(Category category);
+    List<Product> findHighestPriceProductsByCategory(Category category);
 
     List<Product> findAllByBrandId(Long brandId);
 }

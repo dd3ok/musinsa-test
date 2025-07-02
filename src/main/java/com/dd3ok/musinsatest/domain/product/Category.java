@@ -1,5 +1,7 @@
 package com.dd3ok.musinsatest.domain.product;
 
+import com.dd3ok.musinsatest.global.exception.BaseException;
+import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,4 +18,12 @@ public enum Category {
     ACCESSORIES("액세서리");
 
     private final String description;
+
+    public static Category fromString(String name) {
+        try {
+            return Category.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+    }
 }

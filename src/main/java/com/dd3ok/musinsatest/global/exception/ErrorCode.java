@@ -13,14 +13,14 @@ public enum ErrorCode {
     DATA_CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 데이터입니다."),
 
     // brand
-    BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "ID가 '%d'인 브랜드를 찾을 수 없습니다."),
-    BRAND_NAME_DUPLICATED(HttpStatus.CONFLICT, "브랜드 이름 '%s'는 이미 존재합니다."),
-    BRAND_IN_USE(HttpStatus.CONFLICT, "해당 브랜드(ID: %d)에 속한 상품이 존재하여 삭제할 수 없습니다."),
+    BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "브랜드를 찾을 수 없습니다."),
+    BRAND_NAME_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 브랜드입니다."),
+    BRAND_IN_USE(HttpStatus.CONFLICT, "해당 브랜드에 속한 상품이 존재하여 삭제할 수 없습니다."),
     INVALID_BRAND_NULL(HttpStatus.BAD_REQUEST, "브랜드는 null일 수 없습니다."),
 
     // product
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "ID가 '%d'인 상품을 찾을 수 없습니다."),
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리입니다: %s"),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리입니다"),
     INVALID_CATEGORY_NULL(HttpStatus.BAD_REQUEST, "카테고리는 null일 수 없습니다."),
 
     // price

@@ -1,8 +1,10 @@
 package com.dd3ok.musinsatest.application.service;
 
 import com.dd3ok.musinsatest.application.port.in.dto.BrandLowestPriceSetResult;
+import com.dd3ok.musinsatest.application.port.in.dto.BrandPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryLowestPriceProductDto;
+import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceRangeResult;
 import com.dd3ok.musinsatest.application.port.in.dto.LowestPriceProductsResult;
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
@@ -87,7 +89,7 @@ class ProductQueryServiceTest {
                 new Product(26L, new Price(new BigDecimal("5100")), Category.OUTER, winnerBrand)
         );
 
-        // 2. 최저가 브랜드 세팅
+        // 최저가 브랜드 세팅
         given(productRepository.findBrandWithLowestTotalPrice()).willReturn(mockCandidates);
         given(brandRepository.findById(4L)).willReturn(Optional.of(winnerBrand));
         given(productRepository.findAllByBrandId(4L)).willReturn(winnerProducts);
@@ -100,5 +102,43 @@ class ProductQueryServiceTest {
         assertThat(result.brandName()).isEqualTo("D");
         assertThat(result.totalPrice()).isEqualByComparingTo("36100");
         assertThat(result.products()).hasSize(winnerProducts.size());
+    }
+
+    @Test
+    @DisplayName("특정 카테고리의 최저가, 최고가 상품 조회가 성공한다")
+    void 카테고리별_최저가_최고가_조회_성공() {
+        // given
+        String categoryName = "TOP";
+        Category category = Category.TOP;
+
+        Brand brandC = new Brand(3L, "C");
+        List<Product> lowestPriceProducts = List.of(
+                new Product(17L, new Price(new BigDecimal("10000")), category, brandC)
+        );
+
+        Brand brandI = new Brand(9L, "I");
+        List<Product> highestPriceProducts = List.of(
+                new Product(65L, new Price(new BigDecimal("11400")), category, brandI)
+        );
+
+        given(productRepository.findLowestPriceProductsByCategory(category)).willReturn(lowestPriceProducts);
+        given(productRepository.findHighestPriceProductsByCategory(category)).willReturn(highestPriceProducts);
+
+        // when
+        CategoryPriceRangeResult result = productQueryService.getCategoryLowAndHighPrice(categoryName);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.category()).isEqualTo(category.getDescription());
+
+        assertThat(result.lowestPriceProducts()).hasSize(1);
+        BrandPriceDto lowestDto = result.lowestPriceProducts().getFirst();
+        assertThat(lowestDto.brandName()).isEqualTo("C");
+        assertThat(lowestDto.price()).isEqualByComparingTo("10000");
+
+        assertThat(result.highestPriceProducts()).hasSize(1);
+        BrandPriceDto highestDto = result.highestPriceProducts().getFirst();
+        assertThat(highestDto.brandName()).isEqualTo("I");
+        assertThat(highestDto.price()).isEqualByComparingTo("11400");
     }
 }

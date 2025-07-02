@@ -1,11 +1,14 @@
 package com.dd3ok.musinsatest.application.service;
 
 import com.dd3ok.musinsatest.application.port.in.BrandLowestPriceSetUseCase;
+import com.dd3ok.musinsatest.application.port.in.CategoryLowHighPriceUseCase;
 import com.dd3ok.musinsatest.application.port.in.LowestPriceProductsUseCase;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandLowestPriceSetResult;
+import com.dd3ok.musinsatest.application.port.in.dto.BrandPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryLowestPriceProductDto;
 import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceDto;
+import com.dd3ok.musinsatest.application.port.in.dto.CategoryPriceRangeResult;
 import com.dd3ok.musinsatest.application.port.in.dto.LowestPriceProductsResult;
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
@@ -27,7 +30,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ProductQueryService implements LowestPriceProductsUseCase, BrandLowestPriceSetUseCase {
+public class ProductQueryService implements LowestPriceProductsUseCase, BrandLowestPriceSetUseCase,
+        CategoryLowHighPriceUseCase {
 
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
@@ -91,5 +95,23 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
                 categoryPriceDtos,
                 winner.totalPrice()
         );
+    }
+
+    @Override
+    public CategoryPriceRangeResult getCategoryLowAndHighPrice(String categoryName) {
+        Category category = Category.fromString(categoryName.toUpperCase());
+
+        List<Product> lowestProducts = productRepository.findLowestPriceProductsByCategory(category);
+        List<Product> highestProducts = productRepository.findHighestPriceProductsByCategory(category);
+
+        List<BrandPriceDto> lowestPriceDtos = lowestProducts.stream()
+                .map(p -> new BrandPriceDto(p.brand().name(), p.price().value()))
+                .toList();
+
+        List<BrandPriceDto> highestPriceDtos = highestProducts.stream()
+                .map(p -> new BrandPriceDto(p.brand().name(), p.price().value()))
+                .toList();
+
+        return new CategoryPriceRangeResult(category.getDescription(), lowestPriceDtos, highestPriceDtos);
     }
 }
