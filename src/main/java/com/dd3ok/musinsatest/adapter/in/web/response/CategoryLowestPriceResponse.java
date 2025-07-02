@@ -1,7 +1,7 @@
 package com.dd3ok.musinsatest.adapter.in.web.response;
 
 import com.dd3ok.musinsatest.application.port.in.dto.LowestPriceProductsResult;
-import com.dd3ok.musinsatest.global.util.FormatUtil;
+import com.dd3ok.musinsatest.common.util.FormatUtil;
 import lombok.Getter;
 
 import java.math.BigDecimal;

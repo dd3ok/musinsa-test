@@ -31,7 +31,7 @@ public class ProductCommandController {
     public ResponseEntity<Void> createProduct(@RequestBody ProductCreateRequest request) {
         ProductCreateCommand command = new ProductCreateCommand(request.getBrandId(), request.getCategory(), request.getPrice());
         Product createdProduct = productCommandUseCase.createProduct(command);
-        URI location = URI.create("/api/v1/products/" + createdProduct.id());
+        URI location = URI.create("/api/v1/products/" + createdProduct.getId());
         return ResponseEntity.created(location).build();
     }
 

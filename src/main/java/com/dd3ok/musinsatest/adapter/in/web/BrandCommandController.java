@@ -32,7 +32,7 @@ public class BrandCommandController {
     public ResponseEntity<Void> createBrand(@Valid @RequestBody BrandCreateRequest request) {
         BrandCreateCommand command = new BrandCreateCommand(request.getName());
         Brand createdBrand = brandCommandUseCase.createBrand(command);
-        URI location = URI.create("/api/v1/admin/brands/" + createdBrand.id());
+        URI location = URI.create("/api/v1/brands/" + createdBrand.getId());
         return ResponseEntity.created(location).build();
     }
 

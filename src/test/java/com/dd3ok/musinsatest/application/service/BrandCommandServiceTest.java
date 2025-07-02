@@ -2,12 +2,12 @@ package com.dd3ok.musinsatest.application.service;
 
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import com.dd3ok.musinsatest.domain.brand.Brand;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Price;
 import com.dd3ok.musinsatest.domain.product.Product;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class BrandCommandServiceTest {
     void 브랜드를_삭제_요청시_정상적으로_삭제된다() {
         // given
         long brandId = 1L;
-        Brand mockBrand = new Brand(brandId, "A");
+        Brand mockBrand = Brand.from(brandId, "A");
 
         given(brandRepository.findById(brandId)).willReturn(Optional.of(mockBrand));
         given(productRepository.existsByBrandId(brandId)).willReturn(false); // 상품이 없음을 의미
@@ -57,8 +57,8 @@ class BrandCommandServiceTest {
     void 사용중인_브랜드는_삭제에_실패한다() {
         // given
         long brandId = 1L;
-        Brand mockBrand = new Brand(brandId, "A");
-        Product mockProduct = new Product(1L, new Price(BigDecimal.valueOf(10000)), Category.BAG, mockBrand);
+        Brand mockBrand = Brand.from(brandId, "A");
+        Product mockProduct = Product.from(1L, new Price(BigDecimal.valueOf(10000)), Category.BAG, mockBrand);
 
         given(brandRepository.findById(brandId)).willReturn(Optional.of(mockBrand));
         given(productRepository.existsByBrandId(brandId)).willReturn(true);

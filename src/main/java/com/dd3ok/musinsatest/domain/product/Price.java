@@ -1,7 +1,7 @@
 package com.dd3ok.musinsatest.domain.product;
 
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 
 import java.math.BigDecimal;
 

@@ -31,19 +31,15 @@ public class BrandEntity {
     }
 
     public static BrandEntity from(Brand brand) {
-        if (brand.id() != null) {
-            return new BrandEntity(brand.id(), brand.name());
+        if (brand.getId() != null) {
+            return new BrandEntity(brand.getId(), brand.getName());
         } else {
-            return new BrandEntity(brand.name());
+            return new BrandEntity(brand.getName());
         }
     }
 
     public Brand toDomain() {
         return Brand.from(this.id, this.name);
-    }
-
-    public void updateName(String name) {
-        this.name = name;
     }
 
     @Override

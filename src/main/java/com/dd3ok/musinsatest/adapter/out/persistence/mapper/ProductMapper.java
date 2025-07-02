@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProductMapper {
 
-    private final BrandMapper brandMapper;
-
     public Product toDomain(ProductEntity entity) {
         return entity.toDomain();
     }

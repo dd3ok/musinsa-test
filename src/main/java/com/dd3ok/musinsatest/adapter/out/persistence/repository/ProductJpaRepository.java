@@ -40,7 +40,7 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
             "WHERE p.category = :category AND p.price = " +
             "(SELECT MAX(p2.price) FROM ProductEntity p2 WHERE p2.category = :category)")
     List<ProductEntity> findHighestPriceProductsByCategory(@Param("category") Category category);
-
+    
     // API 4
     boolean existsByBrandId(Long brandId);
 }

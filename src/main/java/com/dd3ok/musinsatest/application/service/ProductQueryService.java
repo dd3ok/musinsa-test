@@ -15,8 +15,8 @@ import com.dd3ok.musinsatest.application.port.out.ProductRepository;
 import com.dd3ok.musinsatest.domain.brand.Brand;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,16 +46,16 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
         // 2. 카테고리별로 하나의 상품만 선택
         Map<Category, Product> lowestPriceProductMap = products.stream()
                 .collect(Collectors.toMap(
-                        Product::category,
+                        Product::getCategory,
                         p -> p,
-                        (p1, p2) -> p1.brand().name().compareTo(p2.brand().name()) < 0 ? p1 : p2
+                        (p1, p2) -> p1.getBrand().getName().compareTo(p2.getBrand().getName()) < 0 ? p1 : p2
                 ));
 
         List<CategoryLowestPriceProductDto> productDtos = lowestPriceProductMap.values().stream()
                 .map(product -> new CategoryLowestPriceProductDto(
-                        product.category(),
-                        product.brand().name(),
-                        product.price().value()
+                        product.getCategory(),
+                        product.getBrand().getName(),
+                        product.getPrice().value()
                 ))
                 .toList();
 
@@ -82,15 +82,15 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
         Brand brand = brandRepository.findById(winner.brandId())
                 .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
 
-        // 4. 최저가 브랜드 상품 조회
+        // 3. 최저가 브랜드 상품 조회
         List<Product> products = productRepository.findAllByBrandId(winner.brandId());
 
         List<CategoryPriceDto> categoryPriceDtos = products.stream()
-                .map(p -> new CategoryPriceDto(p.category(), p.price().value()))
+                .map(p -> new CategoryPriceDto(p.getCategory(), p.getPrice().value()))
                 .toList();
 
         return new BrandLowestPriceSetResult(
-                brand.name(),
+                brand.getName(),
                 categoryPriceDtos,
                 winner.totalPrice()
         );
@@ -104,11 +104,11 @@ public class ProductQueryService implements LowestPriceProductsUseCase, BrandLow
         List<Product> highestProducts = productRepository.findHighestPriceProductsByCategory(category);
 
         List<BrandPriceDto> lowestPriceDtos = lowestProducts.stream()
-                .map(p -> new BrandPriceDto(p.brand().name(), p.price().value()))
+                .map(p -> new BrandPriceDto(p.getBrand().getName(), p.getPrice().value()))
                 .toList();
 
         List<BrandPriceDto> highestPriceDtos = highestProducts.stream()
-                .map(p -> new BrandPriceDto(p.brand().name(), p.price().value()))
+                .map(p -> new BrandPriceDto(p.getBrand().getName(), p.getPrice().value()))
                 .toList();
 
         return new CategoryPriceRangeResult(category.getDescription(), lowestPriceDtos, highestPriceDtos);

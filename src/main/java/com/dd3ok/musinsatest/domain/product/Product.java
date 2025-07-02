@@ -1,12 +1,24 @@
 package com.dd3ok.musinsatest.domain.product;
 
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import com.dd3ok.musinsatest.domain.brand.Brand;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public record Product(Long id, Price price, Category category, Brand brand) {
+@Getter
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public final class Product {
 
-    public Product {
+    private Long id;
+    private Price price;
+    private Category category;
+    private Brand brand;
+
+    private Product(Long id, Price price, Category category, Brand brand) {
         if (price == null) {
             throw new BaseException(ErrorCode.INVALID_PRICE_NULL);
         }
@@ -16,6 +28,10 @@ public record Product(Long id, Price price, Category category, Brand brand) {
         if (brand == null) {
             throw new BaseException(ErrorCode.INVALID_BRAND_NULL);
         }
+        this.id = id;
+        this.price = price;
+        this.category = category;
+        this.brand = brand;
     }
 
     public static Product create(Price price, Category category, Brand brand) {
@@ -24,18 +40,6 @@ public record Product(Long id, Price price, Category category, Brand brand) {
 
     public static Product from(Long id, Price price, Category category, Brand brand) {
         return new Product(id, price, category, brand);
-    }
-
-    public Product updatePrice(Price newPrice) {
-        return new Product(this.id, newPrice, this.category, this.brand);
-    }
-
-    public Product updateCategory(Category newCategory) {
-        return new Product(this.id, this.price, newCategory, this.brand);
-    }
-
-    public Product updateBrand(Brand newBrand) {
-        return new Product(this.id, this.price, this.category, newBrand);
     }
 
     public Product update(Price newPrice, Category newCategory, Brand newBrand) {

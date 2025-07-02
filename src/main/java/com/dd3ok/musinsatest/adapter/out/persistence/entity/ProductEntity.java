@@ -55,17 +55,17 @@ public class ProductEntity {
     }
 
     public static ProductEntity from(Product product, BrandEntity brandEntity) {
-        if (product.id() != null) {
+        if (product.getId() != null) {
             return new ProductEntity(
-                    product.id(),
-                    product.price().value(),
-                    product.category(),
+                    product.getId(),
+                    product.getPrice().value(),
+                    product.getCategory(),
                     brandEntity
             );
         } else {
             return new ProductEntity(
-                    product.price().value(),
-                    product.category(),
+                    product.getPrice().value(),
+                    product.getCategory(),
                     brandEntity
             );
         }

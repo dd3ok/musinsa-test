@@ -1,4 +1,4 @@
-package com.dd3ok.musinsatest.global.util;
+package com.dd3ok.musinsatest.common.util;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;

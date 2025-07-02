@@ -6,8 +6,8 @@ import com.dd3ok.musinsatest.application.port.in.command.BrandUpdateCommand;
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
 import com.dd3ok.musinsatest.domain.brand.Brand;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class BrandCommandService implements BrandCommandUseCase {
     @Override
     public Brand updateBrand(BrandUpdateCommand command) {
         brandRepository.findByName(command.brandName()).ifPresent(b -> {
-            if (!b.id().equals(command.brandId())) {
+            if (!b.getId().equals(command.brandId())) {
                 throw new BaseException(ErrorCode.BRAND_NAME_DUPLICATED);
             }
         });

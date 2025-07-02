@@ -9,8 +9,8 @@ import com.dd3ok.musinsatest.domain.brand.Brand;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Price;
 import com.dd3ok.musinsatest.domain.product.Product;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class ProductCommandService implements ProductCommandUseCase {
         Brand newBrand = command.brandId() == null ? null : brandRepository.findById(command.brandId())
                 .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
 
-        Category newCategory = command.category() == null ? null : parseCategory(command.category());
+        Category newCategory = command.category() == null ? null : Category.fromString(command.category());
 
         Price newPrice = command.price() == null ? null : new Price(BigDecimal.valueOf(command.price()));
 
@@ -60,10 +60,6 @@ public class ProductCommandService implements ProductCommandUseCase {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BaseException(ErrorCode.PRODUCT_NOT_FOUND));
         productRepository.delete(product);
-    }
-
-    private Category parseCategory(String categoryName) {
-        return Category.fromString(categoryName.toUpperCase());
     }
 
     // COMMENT: command지만 4번 API 조회 테스트를 위해 조회 추가합니다.

@@ -1,6 +1,6 @@
 package com.dd3ok.musinsatest.domain.brand;
 
-import com.dd3ok.musinsatest.global.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.BaseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ class BrandTest {
 
         // then
         assertThat(brand).isNotNull();
-        assertThat(brand.name()).isEqualTo(validName);
+        assertThat(brand.getName()).isEqualTo(validName);
     }
 
     @Test
@@ -50,7 +50,7 @@ class BrandTest {
         Brand updatedBrand = brand.updateName(newName);
 
         // then
-        assertThat(updatedBrand.name()).isEqualTo(newName);
+        assertThat(updatedBrand.getName()).isEqualTo(newName);
     }
 
     @Test

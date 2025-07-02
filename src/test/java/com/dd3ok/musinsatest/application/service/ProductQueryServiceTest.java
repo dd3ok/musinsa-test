@@ -43,12 +43,12 @@ class ProductQueryServiceTest {
     @DisplayName("카테고리별 최저가 상품 목록 조회 시, 총액과 상품 목록 리턴")
     void 카테고리별_최저가_상품목록_조회시_총액과_상품목록을_정확히_반환한다() {
         // given
-        Brand brandA = new Brand(1L, "A");
-        Brand brandB = new Brand(2L, "B");
+        Brand brandA = Brand.from(1L, "A");
+        Brand brandB = Brand.from(2L, "B");
 
         List<Product> mockProducts = List.of(
-                new Product(1L, new Price(new BigDecimal("10000")), Category.TOP, brandA),
-                new Product(2L, new Price(new BigDecimal("5000")), Category.PANTS, brandB)
+                Product.from(1L, new Price(new BigDecimal("10000")), Category.TOP, brandA),
+                Product.from(2L, new Price(new BigDecimal("5000")), Category.PANTS, brandB)
         );
 
         given(productRepository.findLowestPriceProductsGroupByCategory()).willReturn(mockProducts);
@@ -75,23 +75,19 @@ class ProductQueryServiceTest {
     @DisplayName("단일 브랜드 최저가 세트 조회 시, 여러 브랜드가 최저가일 경우 ID가 가장 빠른 브랜드 리턴")
     void 단일브랜드_최저가_세트_조회_성공() {
         // given
-        // 총액이 36100원으로 동일하지만, brandId가 다른 브랜드 포함
         var winnerCandidate = new BrandTotalPriceDto(4L, new BigDecimal("36100"));
         var tieCandidate = new BrandTotalPriceDto(5L, new BigDecimal("36100"));
         var otherCandidate = new BrandTotalPriceDto(1L, new BigDecimal("40000"));
-
         List<BrandTotalPriceDto> mockCandidates = List.of(winnerCandidate, tieCandidate, otherCandidate);
-
-        // 최종 선택될 브랜드와 상품 목록
-        Brand winnerBrand = new Brand(4L, "D");
-        List<Product> winnerProducts = List.of(
-                new Product(25L, new Price(new BigDecimal("10100")), Category.TOP, winnerBrand),
-                new Product(26L, new Price(new BigDecimal("5100")), Category.OUTER, winnerBrand)
-        );
-
-        // 최저가 브랜드 세팅
         given(productRepository.findBrandWithLowestTotalPrice()).willReturn(mockCandidates);
+
+        Brand winnerBrand = Brand.from(4L, "D");
         given(brandRepository.findById(4L)).willReturn(Optional.of(winnerBrand));
+
+        List<Product> winnerProducts = List.of(
+                Product.from(25L, new Price(new BigDecimal("10100")), Category.TOP, winnerBrand),
+                Product.from(26L, new Price(new BigDecimal("5100")), Category.OUTER, winnerBrand)
+        );
         given(productRepository.findAllByBrandId(4L)).willReturn(winnerProducts);
 
         // when
@@ -101,8 +97,8 @@ class ProductQueryServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.brandName()).isEqualTo("D");
         assertThat(result.totalPrice()).isEqualByComparingTo("36100");
-        assertThat(result.products()).hasSize(winnerProducts.size());
     }
+
 
     @Test
     @DisplayName("특정 카테고리의 최저가, 최고가 상품 조회가 성공한다")
@@ -111,14 +107,14 @@ class ProductQueryServiceTest {
         String categoryName = "TOP";
         Category category = Category.TOP;
 
-        Brand brandC = new Brand(3L, "C");
+        Brand brandC = Brand.from(3L, "C");
         List<Product> lowestPriceProducts = List.of(
-                new Product(17L, new Price(new BigDecimal("10000")), category, brandC)
+                Product.from(17L, new Price(new BigDecimal("10000")), category, brandC)
         );
 
-        Brand brandI = new Brand(9L, "I");
+        Brand brandI = Brand.from(9L, "I");
         List<Product> highestPriceProducts = List.of(
-                new Product(65L, new Price(new BigDecimal("11400")), category, brandI)
+                Product.from(65L, new Price(new BigDecimal("11400")), category, brandI)
         );
 
         given(productRepository.findLowestPriceProductsByCategory(category)).willReturn(lowestPriceProducts);

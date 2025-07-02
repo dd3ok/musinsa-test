@@ -7,10 +7,10 @@ import com.dd3ok.musinsatest.adapter.out.persistence.repository.BrandJpaReposito
 import com.dd3ok.musinsatest.adapter.out.persistence.repository.ProductJpaRepository;
 import com.dd3ok.musinsatest.application.port.in.dto.BrandTotalPriceDto;
 import com.dd3ok.musinsatest.application.port.out.ProductRepository;
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import com.dd3ok.musinsatest.domain.product.Category;
 import com.dd3ok.musinsatest.domain.product.Product;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -72,19 +72,19 @@ public class ProductPersistenceAdapter implements ProductRepository {
 
     @Override
     public void delete(Product product) {
-        productJpaRepository.deleteById(product.id());
+        productJpaRepository.deleteById(product.getId());
     }
 
     private ProductEntity convertToEntity(Product product) {
-        BrandEntity brandEntity = brandJpaRepository.findById(product.brand().id())
+        BrandEntity brandEntity = brandJpaRepository.findById(product.getBrand().getId())
                 .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
 
-        if (product.id() == null) {
+        if (product.getId() == null) {
             return ProductEntity.from(product, brandEntity);
         } else {
-            ProductEntity entity = productJpaRepository.findById(product.id())
+            ProductEntity entity = productJpaRepository.findById(product.getId())
                     .orElseThrow(() -> new BaseException(ErrorCode.PRODUCT_NOT_FOUND));
-            entity.update(product.price().value(), product.category(), brandEntity);
+            entity.update(product.getPrice().value(), product.getCategory(), brandEntity);
             return entity;
         }
     }

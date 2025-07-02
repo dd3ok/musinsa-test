@@ -5,8 +5,6 @@ import com.dd3ok.musinsatest.adapter.out.persistence.mapper.BrandMapper;
 import com.dd3ok.musinsatest.adapter.out.persistence.repository.BrandJpaRepository;
 import com.dd3ok.musinsatest.application.port.out.BrandRepository;
 import com.dd3ok.musinsatest.domain.brand.Brand;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -31,21 +29,14 @@ public class BrandPersistenceAdapter implements BrandRepository {
 
     @Override
     public Brand save(Brand brand) {
-        BrandEntity brandEntity;
-        if (brand.id() != null) {
-            brandEntity = brandJpaRepository.findById(brand.id())
-                    .orElseThrow(() -> new BaseException(ErrorCode.BRAND_NOT_FOUND));
-            brandEntity.updateName(brand.name());
-        } else {
-            brandEntity = brandMapper.toEntity(brand);
-        }
-        BrandEntity savedEntity = brandJpaRepository.save(brandEntity);
+        BrandEntity entity = brandMapper.toEntity(brand);
+        BrandEntity savedEntity = brandJpaRepository.save(entity);
         return brandMapper.toDomain(savedEntity);
     }
 
     @Override
     public void delete(Brand brand) {
-        brandJpaRepository.deleteById(brand.id());
+        brandJpaRepository.deleteById(brand.getId());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.dd3ok.musinsatest.global.exception;
+package com.dd3ok.musinsatest.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.dd3ok.musinsatest.domain.product;
 
+import com.dd3ok.musinsatest.common.exception.BaseException;
+import com.dd3ok.musinsatest.common.exception.ErrorCode;
 import com.dd3ok.musinsatest.domain.brand.Brand;
-import com.dd3ok.musinsatest.global.exception.BaseException;
-import com.dd3ok.musinsatest.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,9 +33,9 @@ class ProductTest {
 
         // then
         assertThat(product).isNotNull();
-        assertThat(product.price()).isEqualTo(validPrice);
-        assertThat(product.category()).isEqualTo(validCategory);
-        assertThat(product.brand()).isEqualTo(validBrand);
+        assertThat(product.getPrice()).isEqualTo(validPrice);
+        assertThat(product.getCategory()).isEqualTo(validCategory);
+        assertThat(product.getBrand()).isEqualTo(validBrand);
     }
 
     @Test
